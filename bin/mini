@@ -1,0 +1,10 @@
+#!/bin/zsh
+# Start Mini: makes sure Ollama is running (with memory-saving settings), then opens the chat.
+ROOT="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+if ! curl -s -o /dev/null http://127.0.0.1:11434/api/tags; then
+  echo "Starting Ollama…"
+  OLLAMA_FLASH_ATTENTION=1 OLLAMA_KV_CACHE_TYPE=q8_0 nohup ollama serve > "$ROOT/assistant/data/ollama.log" 2>&1 &!
+  for i in {1..30}; do curl -s -o /dev/null http://127.0.0.1:11434/api/tags && break; sleep 0.5; done
+fi
+[[ -x "$ROOT/assistant/.venv/bin/python" ]] || { echo "Mini isn't installed yet — run: $ROOT/install.sh"; exit 1; }
+exec "$ROOT/assistant/.venv/bin/python" -W ignore "$ROOT/assistant/mini.py" "$@"

@@ -1,0 +1,77 @@
+# ── Personal data: never commit ─────────────────────────────
+assistant/data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.log
+.input_history
+sessions/
+memory.json
+
+# ── Secrets & local config ──────────────────────────────────
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.cer
+*.certSigningRequest
+*.mobileprovision
+secrets.*
+*.local
+
+# ── Python ──────────────────────────────────────────────────
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# ── Swift / Xcode / Mini Flow build output ──────────────────
+miniflow/.build/
+.build/
+*.app/
+*.dSYM/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+.swiftpm/
+
+# ── AI models & caches (downloaded at install time) ─────────
+*.gguf
+*.bin
+*.safetensors
+*.onnx
+*.ort
+models/cache/
+
+# ── Audio recordings ────────────────────────────────────────
+*.wav
+*.m4a
+*.caf
+*.mp3
+
+# ── Editors & OS ────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+.vscode/
+.idea/
+*.swp
+*~
+.claude/
