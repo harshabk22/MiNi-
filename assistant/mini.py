@@ -596,7 +596,7 @@ def _rank(passages: list[tuple[int, str]], query: str, k: int, per_source: int =
     for sc, src, p in scored:
         if sc > 0.5 and src not in count:
             picked.append((src, p)); count[src] = 1
-    picked = sorted(picked, key=lambda x: -next(sc for sc, s2, p2 in scored if p2 == x[1]))[:k]
+    picked = picked[:k]  # already in score order
     for sc, src, p in scored:
         if len(picked) >= k or sc <= 0.5:
             break

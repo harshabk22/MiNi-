@@ -20,8 +20,10 @@ No cloud AI, no account, no usage limits. Built to run comfortably on an 8 GB Ma
 - [Development](#development)
 - [Troubleshooting](#troubleshooting)
 - [Privacy & safety](#privacy--safety)
+- [Limits](#limits)
 - [Uninstall](#uninstall)
 - [Credits](#credits)
+- [License](#license)
 
 ## Requirements
 - Mac with **Apple Silicon** (M1 or newer), **8 GB RAM** or more
@@ -30,7 +32,7 @@ No cloud AI, no account, no usage limits. Built to run comfortably on an 8 GB Ma
 
 ## Quick start
 ```bash
-git clone <this-repo-url> Mini
+git clone https://github.com/harshabk22/MiNi-.git Mini
 cd Mini
 ./install.sh
 ```
@@ -82,6 +84,7 @@ Names it gets wrong → menu → **Names & words…**
 ```
 Mini/
 ├── README.md                      ← you are here
+├── LICENSE                        MIT
 ├── install.sh                     one-command setup (downloads the model)
 ├── uninstall.sh                   removal (asks before deleting data or the model)
 ├── bin/
@@ -140,6 +143,13 @@ More detail in [`assistant/README.md`](assistant/README.md), [`miniflow/README.m
 
 Full details: [`docs/PRIVACY.md`](docs/PRIVACY.md)
 
+## Limits
+- **Mini is a small (2B) model.** It can be wrong — check facts, math and code before relying on them.
+- **Not for** medical, legal or financial decisions, or anything where a mistake is costly.
+- **Mac only.** Apple Silicon required; no Windows, Linux or Intel Macs.
+- **Mini Flow needs macOS 26+.** Its AI cleanup step uses Apple Intelligence; with it off, only the rule-based cleanup runs.
+- **Approve carefully.** Mini asks before every action — read what it will run before typing `y` / `yes`.
+
 ## Uninstall
 ```bash
 ./uninstall.sh
@@ -152,4 +162,5 @@ Removes the environment and app; asks before deleting the AI model or your perso
 httpx · ddgs · trafilatura · pypdf · prompt_toolkit · Apple Speech & Foundation Models (macOS).
 
 ## License
-_Not chosen yet — add a `LICENSE` file before publishing._
+[MIT](LICENSE) — free to use, change and share; keep the copyright notice. No warranty.
+The AI model is not part of this repo: MiniCPM5-2B is downloaded at install time under its own license (Apache-2.0).
