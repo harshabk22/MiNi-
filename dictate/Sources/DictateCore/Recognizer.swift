@@ -59,7 +59,7 @@ public final class LiveRecognizer: @unchecked Sendable {
         let analyzer = SpeechAnalyzer(modules: [transcriber])
         try await analyzer.setContext(SpeechEngine.context(vocab))
         guard let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: [transcriber]) else {
-            throw NSError(domain: "MiniFlow", code: 1, userInfo: [NSLocalizedDescriptionKey: "No audio format for speech model"])
+            throw NSError(domain: "MiniDictate", code: 1, userInfo: [NSLocalizedDescriptionKey: "No audio format for speech model"])
         }
         try await analyzer.prepareToAnalyze(in: format)
         let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
@@ -84,8 +84,8 @@ public final class LiveRecognizer: @unchecked Sendable {
         guard inFormat.sampleRate > 0, inFormat.channelCount > 0 else {
             await analyzer.cancelAndFinishNow()
             self.analyzer = nil; self.continuation = nil; results?.cancel(); results = nil
-            throw NSError(domain: "MiniFlow", code: 2, userInfo: [NSLocalizedDescriptionKey:
-                "No microphone input (\(Int(inFormat.sampleRate)) Hz, \(inFormat.channelCount) ch). Allow Microphone for Mini Flow."])
+            throw NSError(domain: "MiniDictate", code: 2, userInfo: [NSLocalizedDescriptionKey:
+                "No microphone input (\(Int(inFormat.sampleRate)) Hz, \(inFormat.channelCount) ch). Allow Microphone for Mini Dictate."])
         }
         converter = AVAudioConverter(from: inFormat, to: format)
         input.removeTap(onBus: 0)

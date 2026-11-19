@@ -5,13 +5,15 @@ import SQLite3
 public enum Vocabulary {
     public static let home = FileManager.default.homeDirectoryForCurrentUser
     public static let folder: URL = {
-        let f = home.appendingPathComponent("Library/Application Support/MiniFlow")
+        let f = home.appendingPathComponent("Library/Application Support/MiniDictate")
+        let legacy = home.appendingPathComponent("Library/Application Support/MiniFlow")  // old name: move existing settings over once
+        if !FileManager.default.fileExists(atPath: f.path) { try? FileManager.default.moveItem(at: legacy, to: f) }
         try? FileManager.default.createDirectory(at: f, withIntermediateDirectories: true)
         return f
     }()
     public static let userFile = folder.appendingPathComponent("vocabulary.txt")
-    /// Where Mini (the assistant) keeps its memory — set by install.sh (`defaults write local.miniflow.dictation
-    /// miniDataPath …`). Optional: Mini Flow works without Mini.
+    /// Where Mini (the assistant) keeps its memory — set by install.sh (`defaults write local.mini.dictate
+    /// miniDataPath …`). Optional: Mini Dictate works without Mini.
     static var miniMemory: URL {
         let path = UserDefaults.standard.string(forKey: "miniDataPath")
             ?? home.appendingPathComponent("Documents/Mini/assistant/data").path
@@ -21,7 +23,7 @@ public enum Vocabulary {
     public static func ensureUserFile() {
         guard !FileManager.default.fileExists(atPath: userFile.path) else { return }
         let starter = """
-        # Mini Flow vocabulary — one word or name per line. Helps the speech model spell these right.
+        # Mini Dictate vocabulary — one word or name per line. Helps the speech model spell these right.
         # Lines starting with # are ignored.
         Mini
         """

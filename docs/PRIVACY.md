@@ -1,8 +1,8 @@
 # Privacy & safety
 
 ## What stays on your Mac
-- Your conversations, dictation, memories, chat sessions, command log and Mini Flow vocabulary.
-  Mini: `assistant/data/` · Mini Flow: `~/Library/Application Support/MiniFlow`, log in `~/Library/Logs/MiniFlow`.
+- Your conversations, dictation, memories, chat sessions, command log and Mini Dictate vocabulary.
+  Mini: `assistant/data/` · Mini Dictate: `~/Library/Application Support/MiniDictate`, log in `~/Library/Logs/MiniDictate`.
 - All AI runs locally: MiniCPM5-2B in Ollama, Apple's on-device speech and language models, Moonshine for `/talk`.
 
 ## What uses the internet
@@ -17,7 +17,7 @@
 - Use admin rights, change system settings, kill other apps, control other apps, upload data (git push, ssh, curl -d).
 - Read private folders: .ssh, Keychains, browser data, Mail, Messages, shell history.
 
-## Mini Flow
+## Mini Dictate
 - Listens only while you hold Fn or after you triple-tap it (red indicator), and stops after 1 minute at most.
 - Never pastes into password fields. Restores your clipboard after pasting.
 - Its diagnostics log records permission status, counts and timings — never your words or typed keys.

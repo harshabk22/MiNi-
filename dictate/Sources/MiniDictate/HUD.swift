@@ -1,10 +1,10 @@
 import AppKit
 
-/// Mini Flow's on-screen indicator, in two standard shapes:
+/// Mini Dictate's on-screen indicator, in two standard shapes:
 ///  • a small pill while listening/working (mic level bars + short status + timer in hands-free mode)
 ///  • a compact card only when there's something to act on (text you need to copy, a setup step)
 /// It never takes focus from your app (non-activating panel), so pasting still goes where your cursor is.
-final class FlowHUD: NSObject {
+final class DictateHUD: NSObject {
     private let panel: NSPanel
     private let bg = NSVisualEffectView()
     private let levels = LevelBars()

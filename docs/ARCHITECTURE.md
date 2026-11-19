@@ -28,7 +28,7 @@ Names are saved by code; junk and web-sourced "facts" are rejected.
 **Voice** (`/talk`): Moonshine v2 Small Streaming (speech→text, built-in voice detection) → model → macOS `say`,
 sentence by sentence. Press Enter to interrupt.
 
-## Mini Flow (miniflow/)
+## Mini Dictate (dictate/)
 
 ```
 Fn (hardware HID watcher) ─► mic ─► Apple SpeechAnalyzer (on-device, + your names as hints)
@@ -37,6 +37,7 @@ Fn (hardware HID watcher) ─► mic ─► Apple SpeechAnalyzer (on-device, + y
    ─► paste at the cursor (⌘V, clipboard restored) — never into password fields
 ```
 - Hold Fn = push-to-talk; tap Fn ×3 = hands-free (tap Fn to stop, 60 s limit).
+- Menu-bar only (`LSUIElement`). Opens at login via `SMAppService`. Opening it again while it runs shows a "running" note.
 - Pastes wherever the cursor is, except password fields and clearly non-text spots; "Pasted · Copy" fallback.
 - macOS's automatic Escape on 🌐 is ignored; Fn + another key stays a normal shortcut.
 - Speed: ~0.1–0.4 s speech→text; rules < 1 ms; AI pass ~1–4 s when used.

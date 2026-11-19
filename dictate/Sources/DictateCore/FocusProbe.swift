@@ -9,7 +9,7 @@ public enum FocusProbe {
         public let role: String
         /// Focus is on something that clearly can't take text (button, image, menu…). Many apps — WhatsApp,
         /// browsers, Electron apps — don't report their text boxes at all ("none" / "AXWebArea"), so an
-        /// UNKNOWN focus is NOT treated as "no text box": we paste there, like Wispr Flow does.
+        /// UNKNOWN focus is NOT treated as "no text box": we paste there (many chat and web text boxes report no role).
         public var knownNonText: Bool { FocusProbe.nonTextRoles.contains(role) }
     }
 

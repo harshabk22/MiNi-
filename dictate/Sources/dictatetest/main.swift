@@ -1,10 +1,10 @@
 import AVFoundation
-import FlowCore
+import DictateCore
 import Foundation
 
-// Mini Flow self-test.  flowtest            → formatting rules + safety check (instant, offline)
-//                       flowtest --audio    → also transcribe generated speech (US + Indian-English voices)
-//                       flowtest --ai       → also exercise Apple's on-device model through the safety check
+// Mini Dictate self-test.  dictatetest            → formatting rules + safety check (instant, offline)
+//                       dictatetest --audio    → also transcribe generated speech (US + Indian-English voices)
+//                       dictatetest --ai       → also exercise Apple's on-device model through the safety check
 var failures = 0
 func expect(_ name: String, _ got: String, _ want: String) {
     if got == want { print("✅ \(name)") } else { failures += 1; print("❌ \(name)\n   want: \(want.debugDescription)\n   got:  \(got.debugDescription)") }
@@ -49,7 +49,7 @@ expect("ordinary words untouched", NameFixer.apply("the rule is real and I praye
        "the rule is real and I prayed for rain")
 expect("lowercase i -> I", Rules.apply("yes i think i can do it", tone: .neutral), "Yes I think I can do it")
 
-expect("AI layout polished", FlowFormatter.polish("1. Groceries we need  \n- milk  \n- eggs\n- **bread**"),
+expect("AI layout polished", DictateFormatter.polish("1. Groceries we need  \n- milk  \n- eggs\n- **bread**"),
        "Groceries we need:\n• Milk\n• Eggs\n• Bread")
 
 print("— safety check —")
@@ -63,7 +63,7 @@ expectTrue("accepts faithful layout", Faithfulness.check(original: original,
 let args = CommandLine.arguments
 if args.contains("--audio") {
     print("— real speech model (generated voices) —")
-    let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("miniflow-test")
+    let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("dictate-test")
     try? FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
     let clips: [(String, String, String)] = [
         ("Samantha", "Can you please send me the quarterly report by Friday", "quarterly report by friday"),
@@ -86,9 +86,9 @@ if args.contains("--audio") {
 if args.contains("--ai") {
     print("— Apple on-device model through the safety check —")
     if !AIFormatter.shared.isAvailable {
-        print("⚠️  Apple Intelligence model not available — Mini Flow will use rules only")
+        print("⚠️  Apple Intelligence model not available — Mini Dictate will use rules only")
     } else {
-        let r = await FlowFormatter.format("Groceries we need milk, eggs, bread, and coffee for the week", tone: .neutral)
+        let r = await DictateFormatter.format("Groceries we need milk, eggs, bread, and coffee for the week", tone: .neutral)
         print("   [\(r.path)]\n\(r.text.split(separator: "\n").map { "   " + $0 }.joined(separator: "\n"))")
         expectTrue("AI result is faithful or safely fell back", r.path.hasPrefix("AI") || r.path.hasPrefix("rules"))
         expectTrue("groceries kept", ["milk", "eggs", "bread", "coffee"].allSatisfy { r.text.lowercased().contains($0) })
@@ -97,7 +97,7 @@ if args.contains("--ai") {
 
 if args.contains("--live") {
     print("— live streaming path (audio fed in 0.1 s chunks, like the microphone) —")
-    let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("miniflow-live.wav")
+    let tmp = FileManager.default.temporaryDirectory.appendingPathComponent("dictate-live.wav")
     let p = Process(); p.executableURL = URL(fileURLWithPath: "/usr/bin/say")
     p.arguments = ["-v", "Rishi", "-o", tmp.path, "--data-format=LEI16@44100",
                    "Hey Rahul, for tomorrow we need three things. First book the room, second send the slides, and third order lunch."]
@@ -115,7 +115,7 @@ if args.contains("--live") {
     let t0 = Date()
     let heard = await rec.stop()
     let releaseMs = Int(Date().timeIntervalSince(t0) * 1000)
-    let r = await FlowFormatter.format(heard, tone: .neutral)
+    let r = await DictateFormatter.format(heard, tone: .neutral)
     print("   heard: \(heard)\n   key-release → final text: \(releaseMs) ms · \(r.path)\n\(r.text.split(separator: "\n").map { "   | " + $0 }.joined(separator: "\n"))")
     expectTrue("live path transcribed the message", heard.lowercased().contains("slides") && heard.lowercased().contains("lunch"))
     expectTrue("live path produced a numbered list", r.text.contains("1. ") && r.text.contains("3. "))

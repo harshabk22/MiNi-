@@ -10,7 +10,7 @@ and each one keeps its own license.
 | MiniCPM5-2B (GGUF, Q4_K_M) | Apache-2.0 | https://huggingface.co/openbmb/MiniCPM5-2B-GGUF |
 | Moonshine English Small Streaming (`/talk`) | MIT | https://github.com/moonshine-ai/moonshine |
 
-Mini Flow uses Apple's on-device Speech and Foundation Models frameworks that are built into macOS.
+Mini Dictate uses Apple's on-device Speech and Foundation Models frameworks that are built into macOS.
 They are covered by Apple's macOS license, and nothing is downloaded or redistributed.
 
 ## Software installed by `install.sh`

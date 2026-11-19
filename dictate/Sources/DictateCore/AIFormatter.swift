@@ -58,7 +58,7 @@ public final class AIFormatter: @unchecked Sendable {
 }
 
 /// The whole formatting pipeline: rules first, AI only when needed, and the AI is never trusted blindly.
-public enum FlowFormatter {
+public enum DictateFormatter {
     /// Standard, tidy layout for model output: "•" bullets, no stray spaces, an intro line instead of a lone "1.".
     public static func polish(_ text: String) -> String {
         var lines = text.components(separatedBy: "\n").map { line -> String in

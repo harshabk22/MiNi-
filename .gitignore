@@ -38,8 +38,8 @@ htmlcov/
 dist/
 build/
 
-# ── Swift / Xcode / Mini Flow build output ──────────────────
-miniflow/.build/
+# ── Swift / Xcode / Mini Dictate build output ──────────────────
+dictate/.build/
 .build/
 *.app/
 *.dSYM/

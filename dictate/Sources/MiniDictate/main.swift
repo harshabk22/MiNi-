@@ -1,22 +1,23 @@
 import AppKit
+import ServiceManagement
 @preconcurrency import AVFoundation
-import FlowCore
+import DictateCore
 
-// Mini Flow — two ways to dictate with the Fn/🌐 key:
+// Mini Dictate — two ways to dictate with the Fn/🌐 key:
 //  • Hold Fn, speak, release            → push-to-talk
 //  • Tap Fn 3 times, speak hands-free   → tap Fn once to stop (stops by itself after 1 minute)
 // The text is pasted where your cursor is; if no text box is selected it waits in a small card with Copy.
-// Fn + any other key (arrows, F-keys…) keeps working normally. Mini Flow only listens; it never blocks keys.
+// Fn + any other key (arrows, F-keys…) keeps working normally. Mini Dictate only listens; it never blocks keys.
 
 let app = NSApplication.shared
 app.setActivationPolicy(.accessory)
-let controller = FlowController()
+let controller = DictateController()
 app.delegate = controller
 app.run()
 
 /// Setup diagnostics: permission status and dictation outcomes (counts only — never your words or keys typed).
 func diag(_ line: String) {
-    let dir = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Logs/MiniFlow")
+    let dir = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Logs/MiniDictate")
     try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
     let url = dir.appendingPathComponent("diagnostics.log")
     let entry = "\(ISO8601DateFormatter().string(from: Date())) \(line)\n"
@@ -26,7 +27,7 @@ func diag(_ line: String) {
 
 struct HistoryItem { let text: String; let path: String; let app: String; let date: Date }
 
-final class FlowController: NSObject, NSApplicationDelegate, NSMenuDelegate {
+final class DictateController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     static let fnKeys: Set<Int64> = [63, 179]     // Fn (63) / Globe 🌐 (179)
     static let escapeKey: Int64 = 53
     static let holdDelay = 0.35                   // hold this long → push-to-talk
@@ -35,7 +36,7 @@ final class FlowController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     static let handsFreeLimit = 60                // seconds
 
     var statusItem: NSStatusItem!
-    let hud = FlowHUD()
+    let hud = DictateHUD()
     let recognizer = LiveRecognizer()
     let fnWatcher = FnKeyWatcher()
     var tap: CFMachPort?
@@ -83,20 +84,48 @@ final class FlowController: NSObject, NSApplicationDelegate, NSMenuDelegate {
             hud.showNote("Ready — hold Fn to talk", seconds: 3)
         }
         if FocusProbe.fnKeySystemAction != 0 { showFnSettingCard() }
+        enableOpenAtLoginOnce()
+    }
+
+    /// Opened again while already running (Spotlight, Finder, Launchpad): say so, since the menu-bar icon
+    /// can be hidden behind the notch on a full menu bar.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+        if permissionsOK { hud.showNote("Mini Dictate is running — hold Fn to talk", seconds: 3) }
+        else { startSetupGuide() }
+        return false
+    }
+
+    // MARK: open at login (on by default after setup; switch off in the menu or System Settings → Login Items)
+
+    var opensAtLogin: Bool { SMAppService.mainApp.status == .enabled }
+
+    func enableOpenAtLoginOnce() {
+        guard !UserDefaults.standard.bool(forKey: "loginItemSet") else { return }
+        UserDefaults.standard.set(true, forKey: "loginItemSet")
+        do { try SMAppService.mainApp.register() } catch { diag("open at login failed: \(error)") }
+    }
+
+    @objc func toggleOpenAtLogin() {
+        do {
+            if opensAtLogin { try SMAppService.mainApp.unregister() } else { try SMAppService.mainApp.register() }
+        } catch {
+            diag("open at login toggle failed: \(error)")
+            open("x-apple.systempreferences:com.apple.LoginItems-Settings.extension")
+        }
     }
 
     /// macOS also reacts to 🌐 (dictation / emoji / input source). Only you can change that setting; we explain once.
     func showFnSettingCard() {
         let what = ["", "switches input source", "opens Emoji & Symbols", "starts Apple Dictation"][min(FocusProbe.fnKeySystemAction, 3)]
         hud.showSetup("macOS also uses the 🌐 key",
-                      body: "Right now pressing 🌐 \(what), so a system pop-up appears alongside Mini Flow.\n"
+                      body: "Right now pressing 🌐 \(what), so a system pop-up appears alongside Mini Dictate.\n"
                           + "Fix: Keyboard → “Press 🌐 key to” → Do Nothing.",
                       button: "Open Keyboard Settings", action: { [weak self] in
                           self?.openKeyboardSettings(); self?.hud.hide()
                       }, second: ("Not now", { [weak self] in self?.hud.hide() }))
     }
 
-    // MARK: permissions (only you can grant these; Mini Flow guides and restarts itself when they change)
+    // MARK: permissions (only you can grant these; Mini Dictate guides and restarts itself when they change)
 
     var permissionsOK: Bool { AXIsProcessTrusted() && CGPreflightListenEventAccess() }
     var setupTimer: Timer?
@@ -106,9 +135,9 @@ final class FlowController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if !CGPreflightListenEventAccess() { missing.append("Input Monitoring") }
         if !AXIsProcessTrusted() { missing.append("Accessibility") }
         status = "Needs \(missing.joined(separator: " and "))"
-        hud.showSetup("Mini Flow needs permission",
-                      body: "Switch on “Mini Flow” in Privacy & Security → \(missing.joined(separator: " and ")). "
-                          + "Mini Flow restarts by itself when it's done.",
+        hud.showSetup("Mini Dictate needs permission",
+                      body: "Switch on “Mini Dictate” in Privacy & Security → \(missing.joined(separator: " and ")). "
+                          + "Mini Dictate restarts by itself when it's done.",
                       button: "Open Settings", action: { [weak self] in self?.openMissingPane() },
                       second: ("Restart", { [weak self] in self?.relaunch() }))
         openMissingPane()
@@ -141,14 +170,14 @@ final class FlowController: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     func refreshIcon() {
         guard let button = statusItem?.button else { return }
-        button.image = NSImage(systemSymbolName: recording ? "mic.fill" : "mic", accessibilityDescription: "Mini Flow")
+        button.image = NSImage(systemSymbolName: recording ? "mic.fill" : "mic", accessibilityDescription: "Mini Dictate")
         button.contentTintColor = recording ? .systemRed : nil
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
-        let header = NSMenuItem(title: "Mini Flow", action: nil, keyEquivalent: "")
-        header.attributedTitle = NSAttributedString(string: "Mini Flow", attributes: [.font: NSFont.boldSystemFont(ofSize: 13)])
+        let header = NSMenuItem(title: "Mini Dictate", action: nil, keyEquivalent: "")
+        header.attributedTitle = NSAttributedString(string: "Mini Dictate", attributes: [.font: NSFont.boldSystemFont(ofSize: 13)])
         menu.addItem(header)
         menu.addItem(withTitle: "Hold Fn to talk · tap Fn ×3 for hands-free", action: nil, keyEquivalent: "")
         menu.addItem(withTitle: status, action: nil, keyEquivalent: "")
@@ -169,10 +198,11 @@ final class FlowController: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(.separator())
         toggle(menu, "Smart formatting", useAI && AIFormatter.shared.isAvailable, #selector(toggleAI))
         toggle(menu, "Sounds", sounds, #selector(toggleSounds))
+        toggle(menu, "Open at login", opensAtLogin, #selector(toggleOpenAtLogin))
         add(menu, "Names & words…", #selector(editVocab))
         add(menu, "Permissions…", #selector(openPermissions))
         menu.addItem(.separator())
-        add(menu, "Quit Mini Flow", #selector(quit), "q")
+        add(menu, "Quit Mini Dictate", #selector(quit), "q")
     }
 
     func add(_ menu: NSMenu, _ title: String, _ action: Selector, _ key: String = "") {
@@ -203,7 +233,7 @@ final class FlowController: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func installTap() {
         let mask = (1 << CGEventType.flagsChanged.rawValue) | (1 << CGEventType.keyDown.rawValue)
         let callback: CGEventTapCallBack = { _, type, event, refcon in
-            let me = Unmanaged<FlowController>.fromOpaque(refcon!).takeUnretainedValue()
+            let me = Unmanaged<DictateController>.fromOpaque(refcon!).takeUnretainedValue()
             if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
                 if let t = me.tap { CGEvent.tapEnable(tap: t, enable: true) }
             } else {
@@ -277,7 +307,7 @@ final class FlowController: NSObject, NSApplicationDelegate, NSMenuDelegate {
             AVCaptureDevice.requestAccess(for: .audio) { _ in }
             return
         default:
-            hud.showSetup("Microphone is off", body: "Privacy & Security → Microphone → switch on “Mini Flow”.",
+            hud.showSetup("Microphone is off", body: "Privacy & Security → Microphone → switch on “Mini Dictate”.",
                           button: "Open Settings", action: { [weak self] in
                               self?.open("x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone") })
             return
@@ -333,8 +363,8 @@ final class FlowController: NSObject, NSApplicationDelegate, NSMenuDelegate {
                 await MainActor.run { status = "Ready"; hud.showNote("Didn't catch that") }
                 return
             }
-            let result = await FlowFormatter.format(raw, tone: tone, useAI: ai, vocabulary: vocab)
-            await MainActor.run { Task { @MainActor in await self.deliver(result, to: app) } }
+            let result = await DictateFormatter.format(raw, tone: tone, useAI: ai, vocabulary: vocab)
+            await self.deliver(result, to: app)   // deliver is @MainActor
         }
     }
 

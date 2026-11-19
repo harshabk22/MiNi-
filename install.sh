@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Mini + Mini Flow — one-command setup for Apple Silicon Macs.
+# Mini + Mini Dictate — one-command setup for Apple Silicon Macs.
 #   ./install.sh            set up everything (asks before installing anything system-wide)
 #   ./install.sh --yes      same, without the questions
 # Everything runs on your Mac. Models are downloaded once from Hugging Face / Apple / Moonshine and then work offline.
@@ -71,15 +71,20 @@ ok "Installed into assistant/.venv (your data goes to assistant/data/)"
 .venv/bin/python -W ignore tests/test_mini.py >/dev/null 2>&1 && ok "Self-test passed" || warn "Self-test had failures — run: assistant/.venv/bin/python assistant/tests/test_mini.py"
 chmod +x "$ROOT/bin/mini"
 
-# ---------------------------------------------------------------- Mini Flow (dictation app)
-step "Mini Flow (hold Fn to dictate anywhere)"
+# ---------------------------------------------------------------- Mini Dictate (dictation app)
+step "Mini Dictate (hold Fn to dictate anywhere)"
 if (( MACOS_MAJOR < 26 )); then
-  warn "Mini Flow needs macOS 26 or newer (it uses Apple's on-device speech models). Skipped."
+  warn "Mini Dictate needs macOS 26 or newer (it uses Apple's on-device speech models). Skipped."
 else
-  cd "$ROOT/miniflow"
+  cd "$ROOT/dictate"
   ./build.sh
-  defaults write local.miniflow.dictation miniDataPath "$ROOT/assistant/data"   # lets Mini Flow learn names from Mini
-  ok "Built 'Mini Flow.app' (no download: Apple's speech + AI models are part of macOS)"
+  defaults write local.mini.dictate miniDataPath "$ROOT/assistant/data"   # lets Mini Dictate learn names from Mini
+  # ~/Applications: no admin needed, and Spotlight / Launchpad can find it to reopen it later.
+  APPS="$HOME/Applications"; mkdir -p "$APPS"
+  pkill -f "Mini Dictate.app/Contents/MacOS/MiniDictate" 2>/dev/null
+  rm -rf "$APPS/Mini Dictate.app" && cp -R "Mini Dictate.app" "$APPS/"
+  ok "Installed '$APPS/Mini Dictate.app' (no download: Apple's speech + AI models are part of macOS)"
+  open "$APPS/Mini Dictate.app" && ok "Started — allow the permissions it asks for; it then opens at every login"
 fi
 
 # ---------------------------------------------------------------- `mini` command
@@ -96,6 +101,6 @@ fi
 
 step "Done"
 print "    • Chat:      open a new Terminal and type  mini   (type / for commands)"
-(( MACOS_MAJOR >= 26 )) && print "    • Dictation: open \"$ROOT/miniflow/Mini Flow.app\" — hold Fn to talk, tap Fn ×3 for hands-free"
+(( MACOS_MAJOR >= 26 )) && print "    • Dictation: hold Fn to talk, tap Fn ×3 for hands-free. Reopen any time: Spotlight (⌘ Space) → Mini Dictate"
 print "    • First /talk in Mini downloads its speech model (~143 MB) automatically."
 print "    • Docs:      README.md · docs/ARCHITECTURE.md · docs/PRIVACY.md"

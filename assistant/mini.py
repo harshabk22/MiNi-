@@ -172,7 +172,7 @@ READ_ONLY = {"ls", "pwd", "cat", "head", "tail", "wc", "df", "du", "ps", "uptime
              "uname", "sw_vers", "which", "whereis", "type", "echo", "printf", "grep", "egrep", "rg", "find", "file",
              "stat", "tree", "sort", "uniq", "cut", "diff", "hostname", "id", "groups", "vm_stat", "sysctl",
              "memory_pressure", "top", "system_profiler", "ioreg", "ifconfig", "netstat", "lsof", "mdfind", "mdls",
-             "pmset", "ollama", "brew", "git", "pip", "pip3", "npm", "node", "python3", "wc", "basename", "dirname",
+             "pmset", "ollama", "brew", "git", "pip", "pip3", "npm", "node", "python3", "basename", "dirname",
              "realpath", "md5", "shasum", "column", "jq"}
 READ_ONLY_SUBCMDS = {"git": {"status", "log", "diff", "show", "branch", "remote", "--version", "blame", "shortlog"},
                      "brew": {"list", "info", "search", "--version", "outdated", "config"},
@@ -1501,7 +1501,7 @@ def compact_tools(history: list[dict], turn_start: int):
 
 NOT_NAMES = {"tired", "fine", "good", "ok", "okay", "back", "here", "done", "ready", "sorry", "bored", "sick", "busy",
              "new", "lost", "confused", "happy", "sad", "hungry", "not", "a", "an", "the", "just", "going", "so", "very",
-             "using", "working", "trying", "learning", "from", "in", "at", "on", "good", "great", "well", "alright",
+             "using", "working", "trying", "learning", "from", "in", "at", "on", "great", "well", "alright",
              "stuck", "home", "out", "free", "late", "sure", "glad", "excited", "fine.", "also", "still", "really"}
 
 
