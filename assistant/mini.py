@@ -566,7 +566,7 @@ def _rank(passages: list[tuple[int, str]], query: str, k: int, per_source: int =
     and a coverage penalty so a passage matching only one query word ("dark") can't win. Pure Python, no models."""
     import math
     core = [w for w in _terms(query)]
-    joined = {a + b for a, b in zip(core, core[1:])}                       # dark hub -> darkhub
+    joined = {a + b for a, b in zip(core, core[1:], strict=False)}                       # dark hub -> darkhub
     q = set(core) | joined | set(_terms(extra))
     words = re.findall(r"[A-Za-z0-9]+", query)
     phrase = re.compile(r"[\s\-_.]*".join(map(re.escape, words)), re.I) if words else None
@@ -631,7 +631,7 @@ def web_search(query: str) -> str:
     with ThreadPoolExecutor(4) as ex:
         pages = list(ex.map(lambda h: _fetch_text(h["href"]), top))
     pool = []
-    for i, (h, text) in enumerate(zip(top, pages)):
+    for i, (h, text) in enumerate(zip(top, pages, strict=False)):
         pool.append((i, f"{h.get('title', '')}. {h.get('body', '')}"))        # the snippet always counts
         pool += [(i, p) for p in _passages(text)[:40]]
     best = _rank(pool, query, k=6, extra=STATE["question"])
