@@ -24,6 +24,7 @@ No cloud AI, no account, no usage limits. Built to run comfortably on an 8 GB Ma
 - [Uninstall](#uninstall)
 - [Credits](#credits)
 - [License](#license)
+- [Legal](#legal)
 
 ## Requirements
 - Mac with **Apple Silicon** (M1 or newer), **8 GB RAM** or more
@@ -85,6 +86,7 @@ Names it gets wrong → menu → **Names & words…**
 Mini/
 ├── README.md                      ← you are here
 ├── LICENSE                        MIT
+├── THIRD_PARTY_NOTICES.md         licenses of everything install.sh downloads
 ├── install.sh                     one-command setup (downloads the model)
 ├── uninstall.sh                   removal (asks before deleting data or the model)
 ├── bin/
@@ -162,5 +164,15 @@ Removes the environment and app; asks before deleting the AI model or your perso
 httpx · ddgs · trafilatura · pypdf · prompt_toolkit · Apple Speech & Foundation Models (macOS).
 
 ## License
-[MIT](LICENSE) — free to use, change and share; keep the copyright notice. No warranty.
-The AI model is not part of this repo: MiniCPM5-2B is downloaded at install time under its own license (Apache-2.0).
+[MIT](LICENSE): you are free to use, change and share this code, as long as you keep the copyright notice. It comes with no warranty.
+No models or third-party code are stored in this repo. They are downloaded during install and keep their own licenses,
+all of them permissive (MiniCPM5-2B is Apache-2.0). See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
+## Legal
+- **Your responsibility.** You decide what Mini runs and what you dictate. Use it in line with the law and with other people's rights.
+- **Web search** uses the `ddgs` library, which reads public search-engine results without an API key. Some search
+  engines' terms don't allow automated access. Keep it to light personal use; for anything heavier, use an official search API.
+- **Recording.** Mini Flow and `/talk` listen only while you activate them and keep no audio. Some places have
+  laws about recording other people. Don't use these features to capture other people's conversations without their consent.
+- **Not affiliated** with Apple, OpenBMB, Ollama, Moonshine AI or any search engine. Their names are their trademarks
+  and are used here only to say what this project works with.
