@@ -61,7 +61,7 @@ class Rules(unittest.TestCase):
 
 class Sandbox(unittest.TestCase):
     def setUp(self):
-        DESK.mkdir(exist_ok=True); (DESK / "keep.txt").write_text("keep\n")
+        DESK.mkdir(parents=True, exist_ok=True); (DESK / "keep.txt").write_text("keep\n")
     def tearDown(self):
         shutil.rmtree(DESK, ignore_errors=True)
 
@@ -86,7 +86,7 @@ class Sandbox(unittest.TestCase):
 
 class FileTools(unittest.TestCase):
     def setUp(self):
-        DESK.mkdir(exist_ok=True)
+        DESK.mkdir(parents=True, exist_ok=True)
         (DESK / "page.html").write_text("<html>\n  <h1>Old title</h1>\n  <p>hello</p>\n</html>\n")
     def tearDown(self):
         shutil.rmtree(DESK, ignore_errors=True)
@@ -298,7 +298,7 @@ class Loop(unittest.TestCase):
 
     def test_declined_is_answered_in_code(self):
         out, h = self.run_chat(['<function name="system_info"></function>'], "ram?\n/exit\n")
-        DESK.mkdir(exist_ok=True); (DESK / "a.html").write_text("x")
+        DESK.mkdir(parents=True, exist_ok=True); (DESK / "a.html").write_text("x")
         out, h = self.run_chat([f'<function name="open_file"><param name="path">{DESK}/a.html</param></function>'],
                                "open it\nno\n/exit\n")
         self.assertEqual(h[-1]["content"], "OK, I won't do that. Anything else?")

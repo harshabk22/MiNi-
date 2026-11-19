@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/harshabk22/MiNi-/security/advisories/new
+    about: Report security problems privately. Please don't use a public issue.

@@ -1,0 +1,22 @@
+name: tests
+on:
+  push: { branches: [main] }
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  mini:
+    name: Mini (Python, offline tests)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r assistant/requirements.txt
+      - run: python assistant/tests/test_mini.py
+  scripts:
+    name: Shell scripts (syntax)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: for f in install.sh uninstall.sh bin/mini dictate/build.sh dictate/scripts/create-signing-cert.sh; do zsh -n "$f"; done

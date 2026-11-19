@@ -1,5 +1,8 @@
 # Mini
 
+[![tests](https://github.com/harshabk22/MiNi-/actions/workflows/tests.yml/badge.svg)](https://github.com/harshabk22/MiNi-/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 **A private AI assistant and a voice-dictation app for Apple Silicon Macs — everything runs on your Mac.**
 
 No cloud AI, no account, no usage limits. Built to run comfortably on an 8 GB MacBook.
@@ -18,6 +21,7 @@ No cloud AI, no account, no usage limits. Built to run comfortably on an 8 GB Ma
 - [Using Mini Dictate](#using-mini-dictate)
 - [Project structure](#project-structure)
 - [Development](#development)
+- [Contributing](#contributing)
 - [Troubleshooting](#troubleshooting)
 - [Privacy & safety](#privacy--safety)
 - [Limits](#limits)
@@ -105,6 +109,10 @@ Mini/
 ├── README.md                      ← you are here
 ├── LICENSE                        MIT
 ├── THIRD_PARTY_NOTICES.md         licenses of everything install.sh downloads
+├── CONTRIBUTING.md                how to help: setup, rules, tests
+├── SECURITY.md                    report vulnerabilities privately
+├── CODE_OF_CONDUCT.md             Contributor Covenant 2.1
+├── .github/                       issue/PR templates, automatic tests (GitHub Actions)
 ├── install.sh                     one-command setup (downloads the model)
 ├── uninstall.sh                   removal (asks before deleting data or the model)
 ├── bin/
@@ -142,6 +150,10 @@ cd dictate && ./build.sh
 ```
 More detail in [`assistant/README.md`](assistant/README.md), [`dictate/README.md`](dictate/README.md) and
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+## Contributing
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md).
+**Found a security problem?** Report it privately as described in [SECURITY.md](SECURITY.md). Don't open a public issue.
 
 ## Troubleshooting
 | Problem | Fix |
