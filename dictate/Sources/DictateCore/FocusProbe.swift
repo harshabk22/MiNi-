@@ -44,14 +44,33 @@ public enum FocusProbe {
         return Info(editable: editable, secure: secure, role: role)
     }
 
+    /// The text in the focused text box, if the app exposes it (used to confirm a paste really landed).
+    public static func focusedValue(in app: NSRunningApplication?) -> String? {
+        let pid = app?.processIdentifier ?? NSWorkspace.shared.frontmostApplication?.processIdentifier ?? 0
+        var ref: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(AXUIElementCreateApplication(pid), kAXFocusedUIElementAttribute as CFString, &ref) == .success,
+              let ref, CFGetTypeID(ref) == AXUIElementGetTypeID() else { return nil }
+        let element = ref as! AXUIElement
+        if string(element, kAXSubroleAttribute) == (kAXSecureTextFieldSubrole as String) { return nil }
+        return string(element, kAXValueAttribute)
+    }
+
     static func string(_ el: AXUIElement, _ attr: String) -> String? {
         var v: CFTypeRef?
         guard AXUIElementCopyAttributeValue(el, attr as CFString, &v) == .success else { return nil }
         return v as? String
     }
 
-    /// macOS's own action for the Fn/🌐 key (0 = do nothing, 1 = input source, 2 = emoji, 3 = dictation).
+    /// macOS's own action for the Fn/🌐 key (-1 = macOS default, never changed; 0 = do nothing; 1 = input source;
+    /// 2 = emoji; 3 = dictation).
     public static var fnKeySystemAction: Int {
-        UserDefaults(suiteName: "com.apple.HIToolbox")?.integer(forKey: "AppleFnUsageType") ?? 0
+        KeyPolicy.fnAction(from: UserDefaults(suiteName: "com.apple.HIToolbox")?.object(forKey: "AppleFnUsageType"))
     }
+
+    /// Apple's own Dictation is on (its shortcut is often "Press 🌐 twice", which clashes with tap ×3).
+    public static var appleDictationEnabled: Bool {
+        UserDefaults(suiteName: "com.apple.assistant.support")?.bool(forKey: "Dictation Enabled") ?? false
+    }
+
+    public static var fnConflict: Bool { KeyPolicy.fnConflict(fnAction: fnKeySystemAction, dictation: appleDictationEnabled) }
 }

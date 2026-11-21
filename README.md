@@ -79,10 +79,14 @@ The installer starts it, and a 🎙 appears in the menu bar.
 |---|---|
 | Microphone | Hear you while you hold Fn |
 | Input Monitoring | Notice the Fn key |
-| Accessibility | Paste at your cursor and skip password fields |
+| Accessibility | Paste at your cursor, check the text arrived, skip password fields, keep the 🌐 key's Escape away from apps |
 | Documents folder (sometimes) | Read names from Mini's memory, to spell them right |
 
 Mini Dictate opens the right Settings page and restarts by itself once you've switched it on.
+
+**Recommended once:** macOS also reacts to the 🌐 / Fn key. In System Settings → Keyboard, set **"Press 🌐 key to" →
+Do Nothing**, and under **Dictation** turn it off or choose a shortcut without 🌐. Mini Dictate shows a reminder while
+either is still on.
 
 **Starting and stopping**
 | Situation | What to do |
@@ -100,8 +104,11 @@ Mini Dictate opens the right Settings page and restarts by itself once you've sw
 | Say "new line", "new paragraph", "bullet" | Exact layout |
 | Speak a list ("first… second…") | Numbered or bulleted list |
 | "at 10, no actually 11" | Keeps only "11" |
+| Small grammar slips ("he don't", "should of", "a umbrella") | Fixed, without rewording what you said |
 
-Names it gets wrong → menu → **Names & words…**
+The pop-up says **Pasted** when it could check the text arrived, and **Sent · Copy if missing** in apps that don't allow
+that check (many web and chat apps). Hover over an item in menu → **Recent** to see what the speech model heard next to
+what was pasted. Names it gets wrong → menu → **Names & words…**
 
 ## Project structure
 ```
@@ -129,8 +136,9 @@ Mini/
 │   ├── Sources/
 │   │   ├── DictateCore/           speech, formatting, names, AI + safety check, paste
 │   │   ├── MiniDictate/           menu-bar app: Fn key, pop-up, hands-free, open at login
-│   │   ├── dictatetest/           tests
+│   │   ├── dictatetest/           tests and accuracy measurement
 │   │   └── dictatecli/            transcribe a recording from the command line
+│   ├── eval/                      test sentences and results
 │   ├── Resources/                 Info.plist, entitlements
 │   ├── build.sh                   builds "Mini Dictate.app"
 │   └── scripts/create-signing-cert.sh   optional: keep permissions across rebuilds
@@ -146,7 +154,8 @@ assistant/.venv/bin/python assistant/tests/test_mini.py
 
 # Mini Dictate — build and test
 cd dictate && ./build.sh
-.build/dictatetest --audio --live --ai
+.build/dictatetest --audio --live --ai      # tests
+.build/dictatetest --eval --audio --ai      # accuracy scores (results: dictate/eval/BASELINE.md)
 ```
 More detail in [`assistant/README.md`](assistant/README.md), [`dictate/README.md`](dictate/README.md) and
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
@@ -164,9 +173,10 @@ Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code 
 | 🎙 icon not in the menu bar | It may be hidden behind the notch. Quit other menu-bar apps, or open Mini Dictate again from Spotlight to check it's running |
 | Doesn't start after restart | Menu → tick **Open at login**, or System Settings → General → Login Items → add Mini Dictate |
 | "Mini Flow" still installed (old name) | Quit it, then remove it from Login Items and Privacy & Security. Re-run `./install.sh` |
-| A macOS pop-up (emoji / dictation) appears with Fn | System Settings → Keyboard → "Press 🌐 key to" → **Do Nothing** |
+| A macOS pop-up (emoji / dictation) appears with Fn | System Settings → Keyboard → "Press 🌐 key to" → **Do Nothing**; Keyboard → Dictation → off, or a shortcut without 🌐 |
 | Permissions lost after rebuilding Mini Dictate | Run `dictate/scripts/create-signing-cert.sh` once, then rebuild |
-| Text not pasted in some app | Click **Copy** on the pop-up, or menu → Recent |
+| Text not pasted in some app | Click **Copy** on the pop-up, or menu → Recent. Check the app had a text box selected |
+| A word comes out wrong | Hover the item in menu → Recent: if "Heard" is already wrong, the speech model misheard (add names to **Names & words…**); otherwise the cleanup changed it — please open an issue with the sentence |
 
 ## Privacy & safety
 - **Local AI only** — conversations, dictation and memories never leave your Mac. Internet is used only for web search,
@@ -174,7 +184,10 @@ Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code 
 - **Kernel-enforced limits** — Mini can't permanently delete, move or rename files, write outside
   Desktop/Documents/Downloads, use admin rights, change system settings, upload data, or read private folders
   (`.ssh`, Keychains, browser data). Deletes go to the Trash.
-- **Mini Dictate** listens only while you hold Fn (or after a triple-tap, max 1 minute) and never pastes into password fields.
+- **Mini Dictate** listens only while you hold Fn (or after a triple-tap, max 1 minute) and never pastes into password
+  fields. The microphone starts the moment Fn goes down so your first words aren't cut off; if it was only a tap or an
+  Fn shortcut, that audio is discarded at once. No audio is kept unless you switch on the optional test recordings
+  (see [`docs/PRIVACY.md`](docs/PRIVACY.md)).
 
 Full details: [`docs/PRIVACY.md`](docs/PRIVACY.md)
 
@@ -183,6 +196,8 @@ Full details: [`docs/PRIVACY.md`](docs/PRIVACY.md)
 - **Not for** medical, legal or financial decisions, or anything where a mistake is costly.
 - **Mac only.** Apple Silicon required; no Windows, Linux or Intel Macs.
 - **Mini Dictate needs macOS 26+.** Its AI cleanup step uses Apple Intelligence; with it off, only the rule-based cleanup runs.
+- **Dictation can be wrong.** Accuracy depends on your microphone, accent and background noise, and the cleanup can still
+  get a word or layout wrong. Read the text before you send it.
 - **Approve carefully.** Mini asks before every action — read what it will run before typing `y` / `yes`.
 
 ## Uninstall
@@ -205,7 +220,11 @@ all of them permissive (MiniCPM5-2B is Apache-2.0). See [`THIRD_PARTY_NOTICES.md
 - **Your responsibility.** You decide what Mini runs and what you dictate. Use it in line with the law and with other people's rights.
 - **Web search** uses the `ddgs` library, which reads public search-engine results without an API key. Some search
   engines' terms don't allow automated access. Keep it to light personal use; for anything heavier, use an official search API.
-- **Recording.** Mini Dictate and `/talk` listen only while you activate them and keep no audio. Some places have
-  laws about recording other people. Don't use these features to capture other people's conversations without their consent.
+- **Recording.** Mini Dictate and `/talk` listen only while you activate them and keep no audio by default. The optional
+  test recordings (off by default) store your dictation audio on your Mac until you delete it. Some places have laws
+  about recording other people. Don't use these features to capture other people's conversations without their consent,
+  and don't share recordings of other people.
+- **Screen content.** To confirm a paste, Mini Dictate reads the selected text box once through macOS Accessibility. It
+  doesn't store or send that text, and never reads password fields.
 - **Not affiliated** with Apple, OpenBMB, Ollama, Moonshine AI or any search engine. Their names are their trademarks
   and are used here only to say what this project works with.

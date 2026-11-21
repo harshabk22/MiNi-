@@ -19,8 +19,18 @@
 
 ## Mini Dictate
 - Listens only while you hold Fn or after you triple-tap it (red indicator), and stops after 1 minute at most.
-- Never pastes into password fields. Restores your clipboard after pasting.
+  The microphone starts the instant Fn goes down so your first words aren't cut off; if it was only a tap or an
+  Fn shortcut, that audio is discarded immediately and never transcribed or stored.
+- Never pastes into password fields. Restores your clipboard after pasting (unless you copied something new meanwhile),
+  and marks its temporary clipboard entry so clipboard managers skip it.
+- To confirm a paste it reads the selected text box once through Accessibility; nothing is stored or sent.
+- Its key watcher only blocks the Escape key macOS sends with 🌐 and the Escape you press to cancel; every other key
+  passes through unread.
 - Its diagnostics log records permission status, counts and timings — never your words or typed keys.
+- Recordings are never kept, unless you switch on the hidden test option
+  (`defaults write local.mini.dictate saveClips -bool true`). Then your last 50 dictations are kept as audio + text in
+  `~/Library/Application Support/MiniDictate/clips` on this Mac only, to measure accuracy on your own voice.
+  Cancelled ones are deleted at once. Turn it off with `defaults delete local.mini.dictate saveClips` and delete the folder.
 
 ## Delete everything
 `./uninstall.sh` (asks before deleting personal data), or delete the folders listed above.

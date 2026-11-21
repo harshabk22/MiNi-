@@ -41,6 +41,21 @@ public enum Vocabulary {
         return words.filter { seen.insert($0.lowercased()).inserted }.prefix(100).map { $0 }
     }
 
+    static let calendarWords: Set<String> = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+        "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
+
+    /// True for words that look like a person's or product's name, not a weekday, month or ordinary word that was
+    /// capitalised at the start of a sentence ("Likes", "Works").
+    public static func isLikelyName(_ w: String) -> Bool {
+        let l = w.lowercased()
+        if calendarWords.contains(l) || NameFixer.englishWords.contains(l) { return false }
+        for suffix in ["ing", "ed", "es", "s"] where l.hasSuffix(suffix) && l.count > suffix.count + 2 {
+            let stem = String(l.dropLast(suffix.count))
+            if NameFixer.englishWords.contains(stem) || NameFixer.englishWords.contains(stem + "e") { return false }
+        }
+        return true
+    }
+
     /// Capitalised words from Mini's memories ("User name: Alex" -> "Alex"). Read-only.
     static func namesFromMiniMemory() -> [String] {
         var db: OpaquePointer?
@@ -56,7 +71,7 @@ public enum Vocabulary {
             let fact = String(cString: c)
             for w in fact.split(whereSeparator: { !$0.isLetter && $0 != "-" }) where w.first?.isUppercase == true && w.count > 2 {
                 let s = String(w)
-                if !skip.contains(s) { out.append(s) }
+                if !skip.contains(s) && isLikelyName(s) { out.append(s) }
             }
         }
         return out

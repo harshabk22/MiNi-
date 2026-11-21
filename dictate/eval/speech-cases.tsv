@@ -1,0 +1,13 @@
+# say-voice	spoken text	expected final text (after formatting). Synthetic smoke set; real recordings go in --eval-dir.
+Samantha	Can you please send me the quarterly report by Friday	Can you please send me the quarterly report by Friday?
+Rishi	Please book a meeting room for tomorrow at eleven	Please book a meeting room for tomorrow at 11.
+Tara	Remind the team that the launch is next Monday	Remind the team that the launch is next Monday.
+Daniel	I talked to Rahul and he said the build is broken so we need to fix it before the demo	I talked to Rahul, and he said the build is broken, so we need to fix it before the demo.
+Karen	Hey Priya are you free tonight want to grab dinner	Hey Priya, are you free tonight? Want to grab dinner?
+Moira	The trial period ends Friday so please renew the subscription	The trial period ends Friday, so please renew the subscription.
+Rishi	Let's meet on Tuesday I mean Wednesday at the office	Let's meet on Wednesday at the office.
+Samantha	We need twenty five chairs and three tables for the event	We need 25 chairs and 3 tables for the event.
+Tara	For the trip I need to pack my charger my passport some snacks and the headphones	For the trip I need to pack:\n• My charger\n• My passport\n• Some snacks\n• The headphones
+Daniel	First book the room second send the slides and third order lunch	1. Book the room\n2. Send the slides\n3. Order lunch
+Karen	I'm sorry I can't make it today but I will join the call tomorrow	I'm sorry, I can't make it today, but I will join the call tomorrow.
+Moira	So basically I think we should move the launch to next week because the design team is not ready and the payment flow on mobile has not been tested yet	I think we should move the launch to next week because the design team is not ready and the payment flow on mobile has not been tested yet.

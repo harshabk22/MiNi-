@@ -95,13 +95,13 @@ final class DictateHUD: NSObject {
     }
 
     /// Pasted: a brief confirmation with a Copy button, in case the app ignored the paste.
-    func showPasted(text: String) {
+    func showPasted(text: String, verified: Bool = true) {
         currentText = text; primary = nil
-        label.stringValue = "Pasted"; label.textColor = .labelColor
+        label.stringValue = verified ? "Pasted" : "Sent · Copy if missing"; label.textColor = .labelColor
         timerLabel.stringValue = ""
         levels.showCheck()
         layoutPill(withCopy: true)
-        scheduleHide(after: 3)
+        scheduleHide(after: verified ? 3 : 6)
     }
 
     /// Not pasted (no text box, or a password field): show the text with Copy.

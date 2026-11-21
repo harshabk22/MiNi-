@@ -45,4 +45,17 @@ Run `scripts/create-signing-cert.sh` once to avoid that.
 ```bash
 .build/dictatetest                       # rules, names, safety check (instant)
 .build/dictatetest --audio --live --ai   # + speech model, live streaming path, Apple AI
+.build/dictatetest --eval --audio --ai   # quality score on eval/*.tsv (add --verbose to see each miss)
+.build/dictatetest --eval --ai --eval-dir ~/MiniDictateClips   # score your own recordings: clip.wav + clip.txt
+```
+Results so far are in [`eval/BASELINE.md`](eval/BASELINE.md).
+
+**Measure accuracy on your own voice**
+```bash
+defaults write local.mini.dictate saveClips -bool true      # keep your next dictations (this Mac only, max 50)
+# …dictate normally for a day, then for each clip in ~/Library/Application Support/MiniDictate/clips:
+#    copy <clip>.heard.txt to <clip>.txt and fix it to what you actually said
+.build/dictatetest --eval --eval-dir ~/Library/Application\ Support/MiniDictate/clips                    # current engine
+.build/dictatetest --eval --eval-dir ~/Library/Application\ Support/MiniDictate/clips --engine dictation # Apple Dictation's engine
+defaults write local.mini.dictate engine dictation          # switch the app if that one wins (delete the key to switch back)
 ```

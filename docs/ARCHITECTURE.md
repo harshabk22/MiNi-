@@ -33,11 +33,21 @@ sentence by sentence. Press Enter to interrupt.
 ```
 Fn (hardware HID watcher) ─► mic ─► Apple SpeechAnalyzer (on-device, + your names as hints)
    ─► NameFixer (sounds-alike names from your list) ─► Rules (fillers, commands, corrections, lists)
-   ─► Apple on-device AI only when needed ─► Faithfulness check (keeps ≥85% of words, adds ≤15%)
+   ─► Apple on-device AI when the text needs it (run-ons, lists, corrections, spoken numbers; few-shot prompt + your names)
+   ─► Faithfulness check (keeps ≥85% of words in order, adds ≤15%; numbers as digits, applied self-corrections and
+      one-for-one grammar fixes allowed; numbers, names and negations must never change; nothing invented)
    ─► paste at the cursor (⌘V, clipboard restored) — never into password fields
 ```
 - Hold Fn = push-to-talk; tap Fn ×3 = hands-free (tap Fn to stop, 60 s limit).
 - Menu-bar only (`LSUIElement`). Opens at login via `SMAppService`. Opening it again while it runs shows a "running" note.
 - Pastes wherever the cursor is, except password fields and clearly non-text spots; "Pasted · Copy" fallback.
 - macOS's automatic Escape on 🌐 is ignored; Fn + another key stays a normal shortcut.
-- Speed: ~0.1–0.4 s speech→text; rules < 1 ms; AI pass ~1–4 s when used.
+- The microphone opens the moment Fn goes down and its audio is kept while the speech model loads, so the first words
+  aren't lost; a tap or Fn + another key throws that audio away. Each press is its own session, so a quick release
+  can't leave the microphone running.
+- Paste waits until the target app is in front, reads the text box back (where the app allows it) to confirm
+  "Pasted", restores your clipboard after 1.5 s only if you haven't copied something new, and says so when
+  Accessibility is off instead of failing silently.
+- Speech uses live partials for the preview and full-accuracy finals (no `fastResults`); segments are joined with a space.
+- Speed: ~0.1–0.4 s speech→text; rules < 1 ms; AI pass ~0.7–1.5 s when used.
+- Quality is measured with `dictatetest --eval` (see `dictate/eval/BASELINE.md`).

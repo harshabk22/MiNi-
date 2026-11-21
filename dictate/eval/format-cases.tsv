@@ -1,0 +1,48 @@
+# raw transcript (as the speech model gives it)	expected text (what the user meant to type). \n = line break.
+# Ordinary sentences the rules used to damage
+I'm sorry, I can't make it today.	I'm sorry, I can't make it today.
+What I mean is we should wait for the numbers.	What I mean is we should wait for the numbers.
+The trial period ends Friday.	The trial period ends Friday.
+That was a silver bullet for us.	That was a silver bullet for us.
+I had had enough and that that was it.	I had had enough and that that was it.
+First of all, thanks for coming. Finally, we ship on Monday.	First of all, thanks for coming. Finally, we ship on Monday.
+# Plain sentences that must stay unchanged
+Can you please send me the quarterly report by Friday?	Can you please send me the quarterly report by Friday?
+Remind the team that the launch is next Monday.	Remind the team that the launch is next Monday.
+Thanks, see you soon.	Thanks, see you soon.
+# Sentence boundaries / capitals
+ok. see you then. bye	Ok. See you then. Bye
+so we should go to the store and then pick up the kids and after that we could grab dinner somewhere nice tonight	So we should go to the store and then pick up the kids. After that, we could grab dinner somewhere nice tonight.
+I talked to Rahul he said the build is broken we need to fix it before the demo	I talked to Rahul. He said the build is broken. We need to fix it before the demo.
+# Spoken commands
+Thanks for the update. new paragraph See you Monday.	Thanks for the update.\n\nSee you Monday.
+Agenda bullet budget bullet hiring	Agenda\n• Budget\n• Hiring
+send it to me period	Send it to me.
+# Self-corrections
+The meeting is at 10, no, actually 11.	The meeting is at 11.
+Send the invoice to the client today or actually tomorrow morning.	Send the invoice to the client tomorrow morning.
+Let's meet on Tuesday, I mean Wednesday, at the office.	Let's meet on Wednesday at the office.
+Call me at 5, no wait, 6 o'clock.	Call me at 6 o'clock.
+# Lists
+Hey, Rahul, so for tomorrow, we need 3 things. 1st book the room, 2nd send, the slides and a 3rd order, lunch and the meeting is at 10, no, actually 11.	Hey Rahul,\n\nFor tomorrow, we need 3 things:\n1. Book the room\n2. Send the slides\n3. Order lunch\n\nThe meeting is at 11.
+Groceries we need milk, eggs, bread, and coffee for the week.	Groceries we need for the week:\n• Milk\n• Eggs\n• Bread\n• Coffee
+For the trip I need to pack my charger my passport some snacks and the headphones.	For the trip I need to pack:\n• My charger\n• My passport\n• Some snacks\n• The headphones
+Today I want to finish the report then call the bank and also book the flights.	Today I want to:\n• Finish the report\n• Call the bank\n• Book the flights
+# Numbers
+We need twenty five chairs for the event.	We need 25 chairs for the event.
+The budget is three thousand dollars.	The budget is $3,000.
+# Fillers
+um so I think uh we should go	So I think we should go
+# Long ramble
+so basically I was thinking about the launch plan and I think we should move it to next week because the design team is not ready and the marketing copy still needs review and also we have not tested the payment flow on mobile so let's push it and tell the client on Monday	I was thinking about the launch plan, and I think we should move it to next week. The design team is not ready, and the marketing copy still needs review. We also have not tested the payment flow on mobile. Let's push it and tell the client on Monday.
+# Casual chat
+hey are you free tonight want to grab dinner	Hey, are you free tonight? Want to grab dinner?
+# Grammar polish (light touch: fix mistakes, keep the speaker's words)
+he don't know where there going with this	He doesn't know where they're going with this.
+we should of told them earlier	We should have told them earlier.
+I need alot of help with the report	I need a lot of help with the report.
+they was waiting for us at the station since morning	They were waiting for us at the station since morning.
+your welcome to join us for lunch tomorrow	You're welcome to join us for lunch tomorrow.
+its going to rain so bring a umbrella	It's going to rain, so bring an umbrella.
+# Polish must not change meaning
+don't send the report until Rahul approves it	Don't send the report until Rahul approves it.

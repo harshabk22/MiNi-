@@ -4,9 +4,11 @@ import Foundation
 /// Approach from contextual-ASR research: only change a word when it SOUNDS like a known name (same phonetic key)
 /// and is spelled close to it — and never touch ordinary English words (checked against macOS's word list).
 public enum NameFixer {
-    static let dictionary: Set<String> = {
+    /// Ordinary English words: the all-lowercase entries of macOS's word list (proper names like "Rahul" are capitalised
+    /// there, so they are not in this set).
+    public static let englishWords: Set<String> = {
         guard let text = try? String(contentsOfFile: "/usr/share/dict/words", encoding: .utf8) else { return [] }
-        return Set(text.split(separator: "\n").map { $0.lowercased() })
+        return Set(text.split(separator: "\n").filter { $0.first?.isLowercase == true }.map(String.init))
     }()
 
     /// Simplified Metaphone-style key: first letter kept, similar sounds merged, vowels after the first letter dropped.
@@ -59,8 +61,9 @@ public enum NameFixer {
                 if exact != word { out = (out as NSString).replacingCharacters(in: m.range, with: exact) }   // fix casing
                 continue
             }
-            // ordinary lowercase English words are never changed
-            if word.first?.isLowercase == true && dictionary.contains(word.lowercased()) { continue }
+            // Real English words are never changed, capitalised or not: "Many" at the start of a sentence is the
+            // word "many", not a misheard "Mini". (The speech model already gets names it was hinted right.)
+            if englishWords.contains(word.lowercased()) { continue }
             let key = phoneticKey(word)
             let candidates = keyed.filter { $0.1 == key }.map { ($0.0, similarity($0.0, word)) }.filter { $0.1 >= 0.5 }
             if let best = candidates.max(by: { $0.1 < $1.1 }) {
